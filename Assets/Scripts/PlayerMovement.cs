@@ -1,10 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerMovement : MonoBehaviour
 {
     public float turnSpeed = 20f;
+    public float Speed = 1f;
+    public TextMeshProUGUI countText;
+
+    private int count;
 
     Animator m_Animator;
     Rigidbody m_Rigidbody;
@@ -17,6 +22,14 @@ public class PlayerMovement : MonoBehaviour
         m_Animator = GetComponent<Animator> ();
         m_Rigidbody = GetComponent<Rigidbody> ();
         m_AudioSource = GetComponent<AudioSource> ();
+        count = 0;
+
+        SetCountText();
+    }
+
+    void SetCountText ()
+    {
+        countText.text = "Count: " + count.ToString();
     }
 
     void FixedUpdate ()
@@ -26,6 +39,7 @@ public class PlayerMovement : MonoBehaviour
         
         m_Movement.Set(horizontal, 0f, vertical);
         m_Movement.Normalize ();
+        m_Movement *= Speed;
 
         bool hasHorizontalInput = !Mathf.Approximately (horizontal, 0f);
         bool hasVerticalInput = !Mathf.Approximately (vertical, 0f);
@@ -46,11 +60,11 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 desiredForward = Vector3.RotateTowards (transform.forward, m_Movement, turnSpeed * Time.deltaTime, 0f);
         m_Rotation = Quaternion.LookRotation (desiredForward);
+        m_Rigidbody.MovePosition (m_Rigidbody.position + m_Movement * m_Animator.deltaPosition.magnitude * Speed);
     }
 
     void OnAnimatorMove ()
     {
-        m_Rigidbody.MovePosition (m_Rigidbody.position + m_Movement * m_Animator.deltaPosition.magnitude);
         m_Rigidbody.MoveRotation (m_Rotation);
     }
 
@@ -59,6 +73,9 @@ public class PlayerMovement : MonoBehaviour
         if(other.gameObject.CompareTag("PickUp"))
         {
             other.gameObject.SetActive(false);
+            count = count + 100;
+
+            SetCountText();
         }
     }
 }

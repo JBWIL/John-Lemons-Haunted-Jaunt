@@ -808,6 +808,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turnSpeed: 20
+  Speed: 1
 --- !u!82 &5251857762489346215
 AudioSource:
   m_ObjectHideFlags: 0
